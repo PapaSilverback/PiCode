@@ -1,0 +1,348 @@
+import numpy as np
+import cv2
+import platform
+from matplotlib import pyplot as plt
+
+
+def imageGrayscaleConverter():
+    """This method demos some basic features of OPENCV
+        It will take in an image convert it to greyscale and then by pressing any key it will save the new image to a
+        location.
+    """
+    # Load an color image in greyscale
+    img = cv2.imread('alex.png', 0)
+    # Tell if the image worked will print 'none' if it failed to load.
+    print(img)
+    cv2.imshow('image', img)  # open a new window and display the grey image.
+    while True:
+        k = cv2.waitKey(0)
+
+        if k == 27:  # wait for ESC key to exit
+            cv2.destroyAllWindows()
+            break
+        elif k == ord('s'):  # wait for 's' key to save and exit
+            cv2.imwrite('alexGrey.png', img)
+            cv2.destroyAllWindows()
+            break
+        else:
+            print("Type Either an 's'(To save and Close) or press esc to close(without save)")
+
+    print(platform.platform())
+    return
+
+
+def plotLibDemo():
+    """Basic demo that will open the PLOTLib Screen and show the image."""
+    img = cv2.imread('wombat.jpg', 0)
+    print(img)
+    plt.imshow(img, cmap='gray', interpolation='bicubic')
+    plt.xticks([]), plt.yticks([])  # to hide tick values on X and Y axis
+    plt.show()
+
+
+def saveVideo():
+    cap = cv2.VideoCapture(0)
+
+    # Define the codec and create VideoWriter object
+    out = cv2.VideoWriter('saveVideo.avi', cv2.VideoWriter_fourcc(*'XVID'), 20.0, (640, 480))
+
+    while (cap.isOpened()):
+        ret, frame = cap.read()
+        if ret == True:
+            frame = cv2.flip(frame, 0)
+
+            # write the flipped frame
+            out.write(frame)
+
+            cv2.imshow('frame', ret)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+        else:
+            break
+
+    # Release everything if job is finished
+    cap.release()
+    out.release()
+    cv2.destroyAllWindows()
+    return
+
+
+def recordVideo():
+    cap = cv2.VideoCapture(0)
+    # Define the codec and create VideoWriter object
+    # fourcc = cv2.cv.CV_FOURCC(*'DIVX')
+    # out = cv2.VideoWriter('output.avi',fourcc, 20.0, (640,480))
+    out = cv2.VideoWriter('record.avi', -1, 20.0, (640, 480))
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if ret:
+            # write the flipped frame
+            out.write(frame)
+            cv2.imshow('frame', frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                playMovie()
+                break
+        else:
+            break
+
+    # Release everything if job is finished
+    cap.release()
+    out.release()
+    cv2.destroyAllWindows()
+    return
+
+
+def basicVideoCapture():
+    cap = cv2.VideoCapture(0)
+    while True:
+        # Capture frame-by-frame
+        ret, frame = cap.read()
+        # Our operations on the frame come here
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # Display the resulting frame
+        cv2.imshow('frame', gray)
+        keyPressed = cv2.waitKey(1) & 0xFF
+        if keyPressed == ord('q'):
+            break
+        elif keyPressed == ord('p'):
+            cv2.imshow('image', frame)
+            continue
+        elif keyPressed == ord('v'):
+            recordVideo()
+    # When everything done, release the capture
+    cap.release()
+    cv2.destroyAllWindows()
+    return
+
+
+def playMovie():
+    cap = cv2.VideoCapture('record.avi')
+    print("movie Playing")
+    while (cap.isOpened()):
+        ret, frame = cap.read()
+
+        cv2.imshow('frame', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+    return
+
+
+# imageGrayscaleConverter()
+# plotLibDemo()
+basicVideoCapture()
+#playMovie()
+#saveVideo()
+#recordVideo()
+
+
+
+//***************************************
+import numpy as np
+import cv2
+
+
+def drawLine():
+    # Create a black image
+    img = np.zeros((512, 512, 3), np.uint8)
+
+    # Draw a diagonal blue line with thickness of 5 px
+    img = cv2.line(img, (0, 0), (511, 511), (255, 0, 0), 5)
+    img2 = cv2.rectangle(img, (384, 0), (510, 128), (0, 255, 0), 3)
+    img3 = cv2.circle(img, (50, 50), 15, (0, 0, 255), 12)
+    img4 = cv2.ellipse(img, (256, 256), (50, 50), 300, 0, 300, 255, 10)
+    pts = np.array([[10, 5], [20, 30], [70, 20], [50, 10]], np.int32)
+    pts = pts.reshape((-1, 1, 2))
+    img = cv2.polylines(img, [pts], True, (0, 255, 255))
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    cv2.putText(img, 'Master Control', (10, 500), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
+    assert isinstance(img, object)
+    return img
+
+
+
+cv2.imshow('image', drawLine())
+k = cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+/*************************************
+import cv2
+import numpy as np
+
+
+def nothing(x):
+  pass
+
+drawing = False # true if mouse is pressed
+mode = True # if True, draw rectangle. Press 'm' to toggle to curve
+ix,iy = -1,-1
+
+
+switch = "Brush Size"
+# Create a black image, a window
+img = np.zeros((375,900,3), np.uint8)
+cv2.namedWindow('image')
+
+# create trackbars for color change
+cv2.createTrackbar('R', 'image', 0, 255, nothing)
+cv2.createTrackbar('G', 'image', 0, 255, nothing)
+cv2.createTrackbar('B', 'image', 0, 255, nothing)
+
+# create switch for ON/OFF functionality
+
+cv2.createTrackbar(switch, 'image', 1, 10, nothing)
+
+
+
+# mouse callback function
+def draw_circle(event,x,y,flags,param):
+    global ix,iy,drawing,mode
+    # get current positions of four trackbars
+    r = cv2.getTrackbarPos('R', 'image')
+    g = cv2.getTrackbarPos('G', 'image')
+    b = cv2.getTrackbarPos('B', 'image')
+    s = cv2.getTrackbarPos(switch, 'image')
+    if event == cv2.EVENT_LBUTTONDOWN:
+        drawing = True
+        ix,iy = x,y
+
+    elif event == cv2.EVENT_MOUSEMOVE:
+        if drawing == True:
+            if mode != True:
+               cv2.circle(img,(x,y),s,(r,g,b),-1)
+
+    elif event == cv2.EVENT_LBUTTONUP:
+        drawing = False
+        if mode == True:
+            cv2.rectangle(img,(ix,iy),(x,y),(r,g,b),19)
+        else:
+            cv2.circle(img,(x,y),s,(r,g,b),-1)
+
+# Create a black image, a window and bind the function to window
+img = np.zeros((512,512,3), np.uint8)
+cv2.namedWindow('image')
+cv2.setMouseCallback('image',draw_circle)
+
+while(1):
+    cv2.imshow('image',img)
+    k = cv2.waitKey(1) & 0xFF
+    if k == ord('m'):
+        mode = not mode
+    elif k == ord('q'):
+        break
+cv2.destroyAllWindows()
+//*********************************************
+import cv2
+import numpy as np
+
+
+def nothing(x):
+  pass
+
+def createTaskBars():
+    cv2.namedWindow('image')
+
+    # create trackbars for color change
+    cv2.createTrackbar('R', 'image', 0, 255, nothing)
+    cv2.createTrackbar('G', 'image', 0, 255, nothing)
+    cv2.createTrackbar('B', 'image', 0, 255, nothing)
+
+    # create switch for ON/OFF functionality
+
+    cv2.createTrackbar(switch, 'image', 1, 10, nothing)
+    return
+
+
+switch = "Brush Size"
+# Create a black image, a window
+img = np.zeros((375,900,3), np.uint8)
+createTaskBars()
+
+while(1):
+    cv2.imshow('image',img)
+    k = cv2.waitKey(1) & 0xFF
+    if k == 27:
+        break
+
+    # get current positions of four trackbars
+    r = cv2.getTrackbarPos('R','image')
+    g = cv2.getTrackbarPos('G','image')
+    b = cv2.getTrackbarPos('B','image')
+    s = cv2.getTrackbarPos(switch,'image')
+
+    if s == 0:
+        img[:] = 0
+    else:
+        img[:] = [b,g,r]
+
+cv2.destroyAllWindows()
+
+
+/**********************************
+import cv2
+import numpy as np
+img = cv2.imread('mars.jpg')
+px = img[100, 100] # get the pixel value from image at 100, 100
+print (px) # returns something like [26 34 63]
+
+blue = img[100, 100, 0] # accessiing just the blue pixel or 0 in the array. can change 0 to 1 or 2
+print (blue)
+
+img[100, 100] = [255, 255, 255] # change pixel value.
+# Numpy is a optimized library for fast array calculations.
+# So simply accessing each and every pixel values and
+# modifying it will be very slow and it is discouraged.
+
+# ***********Better method of accessing pixels*****************
+
+better = img.item(100, 100, 1) # should be 255 because we set it above.
+print(better)
+
+print (img.shape)
+print(img.size)
+print(img.dtype)
+
+extra = img[400:500, 400:500]
+img[0:100, 0:100] = extra
+cv2.imwrite('space.png', img)
+img2 = cv2.imread('space.png')
+b, g, r = cv2.split(img2)
+img2 = cv2.merge((b, g, r))
+e1 = cv2.getTickCount()
+# your code execution
+# Marshall was here!
+img1 = cv2.imread('spaceWolf.jpg')
+img2 = cv2.imread('space.png')
+crop_img1 = img1[0:600, 0:1000] # Crop from [y1:y2, x1:x2]
+crop_img2 = img2[0:600, 0:1000]
+cv2.imwrite('testCrop.png', img2)
+# NOTE: its img[y: y + h, x: x + w] and *not* img[x: x + w, y: y + h]
+
+print("begin merge")
+
+dst = cv2.addWeighted(crop_img1, 0.3, crop_img2, 0.7, 0)
+
+e2 = cv2.getTickCount()
+time = (e2 - e1)/ cv2.getTickFrequency()
+print(time)
+
+
+
+cv2.imshow('dst', dst)
+cv2.waitKey(0)
+
+cv2.destroyAllWindows()
+
+
+/**************
+
+
+import cv2
+flags= [i for i in dir(cv2) if i.startswith('COLO_')]
+print (flags)
+
+/********
