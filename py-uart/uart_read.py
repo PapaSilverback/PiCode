@@ -1,20 +1,15 @@
 import time
 import serial
 
+ser = 0
+
 
 def setup():
-    ser = serial.Serial(
+    ser = serial.Serial('/dev/ttyAMA0',baudrate=9600, timeout=1)
+    print("I have just set up the uart.")
 
-        port='dev/ttyAMA0',#This will have to be changed to whatever I need to get it to be
-        baudrate=9600,
-        parity=serial.PARITY_NONE,
-        stopbits=serial.STOPBITS_ONE,
-        bytesize=serial.EIGHTBITS,
-        timeout=1
-        )
 
 def read():
-counter = 0
-while 1:
-    x=ser.readline()
-    print x
+    while 1:
+        x = ser.readline()
+        print (x)
